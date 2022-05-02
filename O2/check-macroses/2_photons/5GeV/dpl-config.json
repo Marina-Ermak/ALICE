@@ -1,0 +1,26 @@
+{
+    "internal-dpl-clock": "",
+    "phos-digit-reader": {
+        "infile": "phosdigits.root",
+        "input-dir": "none",
+        "treename": "o2sim",
+        "nevents": "-1",
+        "terminate-on-eod": "true",
+        "hbfutils-config": "o2simdigitizerworkflow_configuration.ini",
+        "orbit-offset-enumeration": "0",
+        "orbit-multiplier-enumeration": "0",
+        "start-value-enumeration": "0",
+        "end-value-enumeration": "-1",
+        "step-value-enumeration": "1"
+    },
+    "PHOSClusterizerSpec": "",
+    "phos-cluster-writer": {
+        "outfile": "phosclusters.root",
+        "output-dir": "none",
+        "treename": "o2sim",
+        "treetitle": "Tree with PHOS clusters",
+        "nevents": "-1",
+        "autosave": "-1",
+        "terminate": "process"
+    }
+}

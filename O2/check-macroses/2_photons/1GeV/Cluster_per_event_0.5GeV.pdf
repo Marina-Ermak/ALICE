@@ -1,0 +1,29 @@
+{
+//========= Macro generated from object: Cluster per event/Cluster per event
+//========= by ROOT version6.24/06
+   
+   TH2D *ClustersPpersPevent__1 = new TH2D("ClustersPpersPevent__1","Cluster per event",1000,0,1100,1000,0,4);
+   ClustersPpersPevent__1->SetBinContent(1002,9);
+   ClustersPpersPevent__1->SetBinContent(251502,180);
+   ClustersPpersPevent__1->SetBinContent(502002,374);
+   ClustersPpersPevent__1->SetBinContent(752502,283);
+   ClustersPpersPevent__1->SetBinContent(1003002,154);
+   ClustersPpersPevent__1->SetEntries(1000);
+
+   Int_t ci;      // for color index setting
+   TColor *color; // for color definition with alpha
+   ci = TColor::GetColor("#000099");
+   ClustersPpersPevent__1->SetLineColor(ci);
+   ClustersPpersPevent__1->SetMarkerStyle(21);
+   ClustersPpersPevent__1->GetXaxis()->SetTitle("events");
+   ClustersPpersPevent__1->GetXaxis()->SetLabelFont(42);
+   ClustersPpersPevent__1->GetXaxis()->SetTitleOffset(1);
+   ClustersPpersPevent__1->GetXaxis()->SetTitleFont(42);
+   ClustersPpersPevent__1->GetYaxis()->SetTitle("clusters");
+   ClustersPpersPevent__1->GetYaxis()->SetLabelFont(42);
+   ClustersPpersPevent__1->GetYaxis()->SetTitleFont(42);
+   ClustersPpersPevent__1->GetZaxis()->SetLabelFont(42);
+   ClustersPpersPevent__1->GetZaxis()->SetTitleOffset(1);
+   ClustersPpersPevent__1->GetZaxis()->SetTitleFont(42);
+   ClustersPpersPevent__1->Draw("");
+}
