@@ -1,0 +1,80 @@
+-- не принята 
+Голубева Марина
+Группа 7102
+Вариант N 3
+_____________________________
+
+2.1	Процедура, распределяющая больных временно отсутствующего лечащего врача по другим лечащим врачам 
+в соответствии со специализацией врачей. Процедура не должна допускать перекоса при распределении пациентов 
+(т.е. всех пациентов – одному врачу). В качестве параметра принимает идентификатор врача.
+create or replace procedure pat_distr(
+	v_doctor_id in number := 1) is
+
+WRONG_DOCTOR_ID exception;
+NO_DOCTORS exception;
+NO_DISTR exception;
+
+
+cursor c1 is
+	select * from cur_pat
+	where "ATTENDING DOCTOR" = v_doctor_id;
+
+
+v_num_pat	number(3);
+v_num_doc	number(3);
+v_spec varchar2(30);
+v_d_id number(6);
+
+begin
+    select count(*) into v_num_pat
+    from pat_doc_spec
+        where id = v_doctor_id;
+    if v_num_pat=0 then
+        RAISE NO_DISTR;
+    end if;
+
+    SELECT count(*) into v_num_doc
+    FROM DOCTORS 
+    WHERE ID = v_doctor_id;
+
+    IF(v_num_doc=0)
+    then
+    RAISE WRONG_DOCTOR_ID;
+    end if;
+
+    select specialization into v_spec
+    from doctors
+        where id = v_doctor_id;
+
+    SELECT count(*) into v_num_doc
+    FROM DOCTORS
+        WHERE ID <> v_doctor_id and specialization = v_spec;
+
+    IF(v_num_doc=0)
+    then
+    RAISE  NO_DOCTORS;
+    end if;
+
+    
+    for v_c1 in c1 loop
+        select ID  into  v_d_id 
+            from (select d.ID, count(p."ATTENDING DOCTOR") 
+                from (select id from doctors where ID != v_doctor_id and SPECIALIZATION = v_spec) d 
+                LEFT JOIN cur_pat p ON d.iD = p."ATTENDING DOCTOR" 
+                group by d.ID
+                order by 2) doc
+            where rownum < 2;
+        update patients
+			set "ATTENDING DOCTOR" = v_d_id
+				where REGNUMBER = v_c1.REGNUMBER;
+    end loop;
+
+exception
+	when WRONG_DOCTOR_ID then
+		dbms_output.put_line('Error!Wrong doctor_id');
+	when NO_DOCTORS then
+		dbms_output.put_line('Error!No free doctors available');
+    when NO_DISTR then
+		dbms_output.put_line('Error! NO NEED FOR THE REPLACEMENT');
+end;
+

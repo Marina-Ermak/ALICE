@@ -1,0 +1,65 @@
+-- не принята
+
+Голубева Марина
+Группа 7102
+Вариант N 3
+
+Лабораторная работа 2
+
+Один из запросов надо написать двумя способами и объяснить, какой из вариантов будет работать быстрее и почему.
+Проверить, что лечащими врачами пациентов являются те врачи, 
+которые работают в том же отделении, в котором лежат их пациенты (выдать список нарушений). 
+
+SELECT P.*, D.*, W.*
+    FROM PATIENTS P RIGHT JOIN DOCTORS D ON D.ID=P."ATTENDING DOCTOR"
+    LEFT JOIN WARD W ON P."NUMBER OF WARD"=W.WARDNO
+    WHERE NOT D.DEPNO=W.DEPNO
+--+, хотя здесь не надо использовать открытые соединения.
+
+Посчитать количество гипертоников, поступивших в текущем году.
+
+SELECT COUNT(*)
+FROM PATIENTS P
+ WHERE DIAGNOSIS='hypertensive' AND EXTRACT( YEAR FROM P."DATE OF ARRIVE") = EXTRACT(YEAR FROM sysdate)
+-- нет условия "в текущем году"
+-- исправила
+--+
+
+Создать упорядоченные списки:
+•	пациентов в каждой палате с указанием ФИО врача и диагноза;
+
+SELECT P."NUMBER OF WARD", P."FCs", D."FCs"
+    FROM PATIENTS P JOIN DOCTORS D ON D.ID=P."ATTENDING DOCTOR"
+    WHERE P."DATE OF EXTRACT" IS NULL
+    ORDER BY P."NUMBER OF WARD"
+-- не учитывается, что пациенты могут быть выписаны.
+-- исправила
+--+
+
+•	количества свободных коек в каждой палате;
+SELECT W.WARDNO, (SELECT (W."NUMBER OF BEDS" - COUNT(*)) FROM PATIENTS P WHERE P."NUMBER OF WARD"=W.WARDNO AND P."DATE OF EXTRACT" IS NULL) AS OCCUPIED_BEDS
+FROM WARD W
+GROUP BY W.WARDNO, "NUMBER OF BEDS";
+-- это количество занятых коек, а не свободных
+-- Исправила, но теперь выводятся только палаты, в которых есть хотя бы один пациент, если палата пустая, 
+то она не показывается. Подскажите, пожалуйста, как можно вывести ещё и с палатами, где count(*)=0?
+-- Или использовать LEFT JOIN, или посчитать количество занятых коек в коррелированном подзапросе в части select
+-- Исправила
+
+
+•	не выписанных пациентов врачей-кардиологов.
+Первый вариант:
+SELECT P."FCs", P."DATE OF EXTRACT", P.DIAGNOSIS, D."FCs", D.SPECIALIZATION
+    FROM PATIENTS P JOIN DOCTORS D ON D.ID=P."ATTENDING DOCTOR"
+    WHERE "DATE OF EXTRACT" IS NULL AND D.SPECIALIZATION='CARDIOLOGIST'
+--+
+Второй вариант:
+SELECT *
+	FROM  PATIENTS P
+	WHERE  "DATE OF EXTRACT" IS NULL AND EXISTS (SELECT * FROM DOCTORS D
+			WHERE  D.SPECIALIZATION='CARDIOLOGIST' AND D.ID=P."ATTENDING DOCTOR");
+--+
+
+Первый вариант будет работать дольше, т.к. в первом случае строится декартово произведение.
+-- при наличии индекса по внешнему ключу второй вариант будет работать  дольше
+

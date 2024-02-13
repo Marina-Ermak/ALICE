@@ -1,0 +1,66 @@
+-- не принята
+
+Голубева Марина
+Группа 7102
+Вариант N 3
+
+
+Л.р. №4. Изучение операций реляционной алгебры. 
+Необходимо написать на языке SQL запросы, которые реализуют операции реляционной алгебры.
+Если для демонстрации операций РА недостаточно отношений,
+созданных во время выполнения работы №1,то следует создать дополнительные отношения.
+
+--Селекция
+--Все невыписанные пациенты
+SELECT * FROM patients
+WHERE finishdate IS NULL;
+--+
+
+--Проекция
+--Имя, пол и дата попадания в больницу
+SELECT DISTINCT "FCs", "SEX", "DATE OF ARRIVE"
+FROM PATIENTS;
+--+
+
+--Декартово произведение
+--Все пары доктор - пациент
+SELECT * FROM DOCTORS D, PATIENTS P
+ORDER BY D.DEPNO;
+--+
+
+--Объединение
+--Все пациенты, больные ангиной и аппендицитом
+SELECT * FROM PATIENTS P WHERE P.DIAGNOSIS = 'hypertensive'
+UNION
+SELECT * FROM PATIENTS P WHERE P.DIAGNOSIS = 'stroke';
+--+
+
+--Разность
+--Все пациенты, которые не лежат в палатах люкс
+CREATE TABLE LUXWARD (
+WARDNO NUMBER NOT NULL,
+"NUMBER OF BEDS" NUMBER NOT NULL,
+DEPNO NUMBER NOT NULL,
+CONSTRAINT "LUXWARD_FK" FOREIGN KEY ("DEPNO") REFERENCES "DEPARTMENT" ("DEPNO")
+);
+
+INSERT INTO LUXWARDS VALUES(1,4,1);
+INSERT INTO LUXWARDS VALUES(2,4,1);
+INSERT INTO LUXWARDS VALUES(3,4,1);
+SELECT * FROM WARDS W WHERE (W.ID, W."NUMBER OF BEDS", W.DEPNO) 
+  NOT IN (SELECT WL.WARDNO, WL.BEDCOUNT,WL.DEP_NO FROM LUXWARD WL);
+--+
+
+--Пересечение
+--Список пациентов мужского пола, которые лежат в больнице с диагнозом инсульт
+select * from PATIENTS P1 where SEX='M' and exists 
+	(select * from PATIENTS P2 where DIAGNOSIS='stroke' and P1.REGNUMBER=P2.REGNUMBER);
+-- не соответствует определению операции пересечения
+--исправлено
+
+--Соединение 
+--Все пары отеделение - палаты
+SELECT * FROM DEPARTMENT D, WARD W
+WHERE W.DEPNO = D.DEPNO
+ORDER BY 1;
+--+

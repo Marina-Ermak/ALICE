@@ -1,0 +1,86 @@
+-- не принята
+
+Голубева Марина
+Группа 7102
+Вариант N 3
+
+
+Л.р. №4. Изучение операций реляционной алгебры. 
+Необходимо написать на языке SQL запросы, которые реализуют операции реляционной алгебры.
+Если для демонстрации операций РА недостаточно отношений,
+созданных во время выполнения работы №1,то следует создать дополнительные отношения.
+
+--Селекция
+--Все невыписанные пациенты
+SELECT * FROM patients
+WHERE finishdate IS NULL;
+--+
+
+--Проекция
+--Имя, пол и дата попадания в больницу
+SELECT DISTINCT "FCs", "SEX", "DATE OF ARRIVE"
+FROM PATIENTS;
+--+
+
+--Декартово произведение
+--Все пары доктор - пациент
+SELECT * FROM DOCTORS D, PATIENTS P
+ORDER BY D.DEPNO;
+--+
+
+--Объединение
+--Все пациенты, больные ангиной и аппендицитом
+SELECT * FROM PATIENTS P WHERE P.DIAGNOSIS = 'hypertensive'
+UNION
+SELECT * FROM PATIENTS P WHERE P.DIAGNOSIS = 'stroke';
+--+
+
+--Разность
+--Все палаты, которые не принадлежат классу люкс
+CREATE TABLE LUXWARD (
+WARDNO NUMBER NOT NULL,
+"NUMBER OF BEDS" NUMBER NOT NULL,
+DEPNO NUMBER NOT NULL,
+CONSTRAINT "LUXWARD_FK" FOREIGN KEY ("DEPNO") REFERENCES "DEPARTMENT" ("DEPNO")
+);
+
+INSERT INTO LUXWARDS VALUES(1,4,1);
+INSERT INTO LUXWARDS VALUES(2,4,1);
+INSERT INTO LUXWARDS VALUES(3,4,1);
+SELECT * FROM WARD W WHERE (W.WARDNO, W."NUMBER OF BEDS", W.DEPNO) 
+  NOT IN (SELECT WL.WARDNO, WL."NUMBER OF BEDS", WL.DEPNO FROM LUXWARD WL);
+--+
+
+--Пересечение
+--Все палаты, которые принадлежат классу люкс
+CREATE TABLE LUXWARD (
+WARDNO NUMBER NOT NULL,
+"NUMBER OF BEDS" NUMBER NOT NULL,
+DEPNO NUMBER NOT NULL,
+CONSTRAINT "LUXWARD_FK" FOREIGN KEY ("DEPNO") REFERENCES "DEPARTMENT" ("DEPNO")
+);
+
+INSERT INTO LUXWARDS VALUES(1,4,1);
+INSERT INTO LUXWARDS VALUES(2,4,1);
+INSERT INTO LUXWARDS VALUES(3,4,1);
+SELECT * FROM WARD W WHERE (W.WARDNO, W."NUMBER OF BEDS", W.DEPNO) 
+IN (SELECT WL.WARDNO, WL."NUMBER OF BEDS", WL.DEPNO FROM LUXWARD WL)
+
+-- не соответствует определению операции пересечения
+--исправлено
+-- неверно: пересечение - операция над разными отношениями. Пересечение таблицы самой с собой - эта и есть сама таблица.
+-- подсказка: это обратная операция к разности.
+-- Или представьте себе решение такой задачи:
+Есть две таблицы: Студенты (фамилия, имя, отчество, д.р., адрес) и Сотрудники (фамилия, имя, отчество, д.р., адрес).
+Надо вывести список студентов, которые не являются сотрудниками (разность) 
+и список студентов, которые являются сотрудниками (пересечение).
+Никаких идентификаторов в таблицах нет.
+-- исправлено, надеюсь, что на этот раз правильно
+
+
+--Соединение 
+--Все пары отеделение - палаты
+SELECT * FROM DEPARTMENT D, WARD W
+WHERE W.DEPNO = D.DEPNO
+ORDER BY 1;
+--+
