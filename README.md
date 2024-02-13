@@ -3,3 +3,9 @@
   * rejection-method
 * O2 
   * check-macroses
+
+# Python bot
+* 3 modules for telegram eco-bot
+
+# SQL
+* different queries for medical database
