@@ -9,3 +9,5 @@
 
 # SQL
 * different queries for medical database
+# ML_course_MIPT
+*labs and homeworks from ML course MIPT, some of them overlap with Standford courses
